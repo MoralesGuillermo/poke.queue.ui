@@ -10,7 +10,7 @@ import { AlertCircle } from 'lucide-react'
 import PokemonTypeSelector from "@/components/pokemon-type-selector"
 import ReportsTable from "@/components/reports-table"
 import { getPokemonTypes } from "@/services/pokemon-service"
-import { getReports, createReport } from "@/services/report-service"
+import { getReports, createReport, deleteReport } from "@/services/report-service"
 
 export default function PokemonReportsPage() {
   const [pokemonTypes, setPokemonTypes] = useState([])
@@ -104,6 +104,19 @@ export default function PokemonReportsPage() {
     window.open(url, "_blank")
   }
 
+  const handleReportDelete = async (id) => {
+    let cause = ""
+    try{
+      await deleteReport(id)
+      toast.success("Se ha borrado el reporte exitosamente!")
+      await loadReports()
+    } catch (error){
+      console.error("Error deleting report: ", error)
+      cause = error.cause == 404? "No se encontró el archivo. Por favor intenta de nuevo": "No se pudo borrar el reporte. Por favor, intenta de nuevo."
+      toast.error(cause)
+    }
+  }
+
   const isLoading = loadingTypes || loadingReports
 
   return (
@@ -146,6 +159,7 @@ export default function PokemonReportsPage() {
             loading={loadingReports}
             onRefresh={handleRefreshTable}
             onDownload={handleDownloadCSV}
+            onDelete={handleReportDelete}
           />
         </CardContent>
       </Card>

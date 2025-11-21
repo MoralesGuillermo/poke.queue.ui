@@ -43,3 +43,23 @@ export async function getReports() {
       throw error
     }
   }
+
+
+export async function deleteReport(id){
+  try{
+    const response = await fetch(`${settings.URL}/api/request/${id}`, {
+      method: "DELETE",
+    })
+
+    if (!response.ok)
+      throw new Error(`Error: ${response.status} - ${response.statusText}`, {cause: response.status})
+
+    const data = await response.json()
+    console.log("API Response (POST):", data) // Para depurar la respuesta
+
+    return data
+  }catch(error){
+    console.error("Error deleting report: ", error)
+    throw error
+  }
+}

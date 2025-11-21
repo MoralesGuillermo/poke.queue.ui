@@ -1,13 +1,16 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Download, RefreshCw, ArrowUpDown } from "lucide-react"
+import { Download, RefreshCw, ArrowUpDown} from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton} from "@/components/ui/skeleton"
+import ADialog from "./ui/dialog"
 
-export default function ReportsTable({ reports, loading, onRefresh, onDownload }) {
+
+
+export default function ReportsTable({ reports, loading, onRefresh, onDownload, onDelete }) {
   const [refreshing, setRefreshing] = useState(false)
   const [sortedReports, setSortedReports] = useState([])
   const [sortDirection, setSortDirection] = useState("desc") // "desc" para descendente (más reciente primero)
@@ -90,6 +93,7 @@ export default function ReportsTable({ reports, loading, onRefresh, onDownload }
     onDownload(url)
   }
 
+
   // Manejar el refresco de la tabla
   const handleRefresh = async () => {
     try {
@@ -101,6 +105,7 @@ export default function ReportsTable({ reports, loading, onRefresh, onDownload }
     } finally {
       setRefreshing(false)
     }
+
   }
 
   return (
@@ -176,11 +181,18 @@ export default function ReportsTable({ reports, loading, onRefresh, onDownload }
                   <TableCell>{getPropertyValue(report, "created")}</TableCell>
                   <TableCell>{getPropertyValue(report, "updated")}</TableCell>
                   <TableCell>
-                    {isStatusCompleted(report) && (
-                      <Button variant="ghost" size="icon" onClick={() => handleDownload(report)} title="Download CSV">
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <div className="flex justify-start">
+                      {isStatusCompleted(report) && (
+                        <Button variant="ghost" size="icon" onClick={() => handleDownload(report)} title="Download CSV">
+                          <Download className="h-4 w-4" />
+                        </Button>
+                      )}
+                      {isStatusCompleted(report) && (
+                          <ADialog 
+                            reportId={ getPropertyValue(report, "ReportId") } 
+                            onDelete={ onDelete } ></ADialog>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
