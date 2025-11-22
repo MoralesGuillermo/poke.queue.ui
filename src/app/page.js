@@ -8,6 +8,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle } from 'lucide-react'
 
 import PokemonTypeSelector from "@/components/pokemon-type-selector"
+import Sample from "@/components/sample"
 import ReportsTable from "@/components/reports-table"
 import { getPokemonTypes } from "@/services/pokemon-service"
 import { getReports, createReport, deleteReport } from "@/services/report-service"
@@ -20,6 +21,7 @@ export default function PokemonReportsPage() {
   const [creatingReport, setCreatingReport] = useState(false)
   const [error, setError] = useState(null)
   const [selectedType, setSelectedType] = useState("")
+  const [sampleSize, setSampleSize] = useState("")
 
   // Cargar los tipos de Pokémon
   useEffect(() => {
@@ -80,7 +82,7 @@ export default function PokemonReportsPage() {
       setCreatingReport(true)
 
       // Crear un nuevo reporte usando la API
-      await createReport(selectedType)
+      await createReport(selectedType, sampleSize)
 
       // Mostrar notificación de éxito
       toast.success(`Se ha generado un nuevo reporte para el tipo ${selectedType}.`)
@@ -135,11 +137,17 @@ export default function PokemonReportsPage() {
           )}
 
           <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="w-full md:w-2/3">
+            <div className="w-full md:w-1/3">
               <PokemonTypeSelector
                 pokemonTypes={pokemonTypes}
                 selectedType={selectedType}
                 onTypeChange={setSelectedType}
+                loading={loadingTypes}
+              />
+            </div>
+            <div className="w-full md:w-1/3">
+              <Sample
+                onSampleChange={setSampleSize}
                 loading={loadingTypes}
               />
             </div>
